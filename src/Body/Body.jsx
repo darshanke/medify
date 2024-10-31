@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../SliderBar/Navbar";
 import Homehero from "../HeroSection/Homehero";
 import HeroAbsolute from "../HeroSection/heroAbsolute";
@@ -14,8 +14,65 @@ import vectorInncer from "./assests/Vector (3).png";
 import { AppointmentOffer } from "../Appointment/AppointmentOffer";
 import AppointmnetCard from "../Appointment/AppointmnetCard";
 import Booking from "../Appointment/Booking";
+import axios from "axios";
 
 const Body = ({ value, setValue, changeUi, setUi }) => {
+  const baseURi = `https://meddata-backend.onrender.com`;
+  const [orginalState, setOrginalState] = useState([]);
+  const [hospitalList, setHospitalList] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [formData, setFormData] = useState({
+    state: "",
+    city: "",
+  });
+  let localData;
+
+  const searchHospitalList = async () => {
+    try {
+      const res = await axios.get(
+        `${baseURi}/data?state=${formData.state}&city=${formData.city}`
+      );
+      console.log(res.data);
+      setHospitalList(res.data);
+    } catch (e) {
+      setHospitalList([]);
+    }
+  };
+  //to show booking and redirect 
+  const [showBooking,setBooking] = useState(false);
+
+  const performFetchState = async () => {
+    try {
+      const response = await axios.get(`${baseURi}/states`);
+      // console.log(response.data);
+      setOrginalState(response.data);
+    } catch (e) {
+      console.log(e.message);
+      setOrginalState([]);
+    }
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      await performFetchState();
+      // console.log()
+    };
+    load();
+  }, []);
+  useEffect(() => {}, [orginalState, hospitalList, ]);
+  useEffect(()=>{
+    localData =  JSON.parse(localStorage.getItem('bookinglist'));
+    console.log(localData);
+  },[showBooking])
+  // useEffect(()=>{
+
+  //   const load=async()=>
+  //     {
+  //       await searchHospitalList();
+  //     }
+  //     load();
+  // },[formData.city])
+
   return (
     <div>
       <Box
@@ -26,16 +83,19 @@ const Body = ({ value, setValue, changeUi, setUi }) => {
             "linear-gradient(81deg, #E7F0FF 9.01%, rgba(232, 241, 255, 0.47) 89.11%)",
         }}
       >
+    
         <Navbar
           value={value}
           setValue={setValue}
           changeUi={changeUi}
           setUi={setUi}
+          setBooking={setBooking}
         />
 
         <Box>
-          <Homehero changeUi={changeUi} />
+          <Homehero changeUi={changeUi} showBooking={showBooking} />
         </Box>
+     
       </Box>
 
       <div
@@ -45,7 +105,16 @@ const Body = ({ value, setValue, changeUi, setUi }) => {
           alignItems: "center",
         }}
       >
-        <HeroAbsolute changeUi={changeUi} />
+        {/* {showBooking  && <Typography>MyBookings</Typography>} */}
+        <HeroAbsolute
+          changeUi={changeUi}
+          orginalState={orginalState}
+          searchHospitalList={searchHospitalList}
+          setUi={setUi}
+          setFormData={setFormData}
+          setBooking={setBooking}
+          showBooking={showBooking}
+        />
       </div>
       {!changeUi && <SliderComponent />}
       {!changeUi && (
@@ -82,21 +151,29 @@ const Body = ({ value, setValue, changeUi, setUi }) => {
             paddingLeft: { xs: "20px", sm: "20px", md: "135px", lg: "135px" },
             paddingRight: { xs: "20px", sm: "20px", md: "135px", lg: "135px" },
             fontFamily: "Poppins",
-           
+
             fontWeight: 500,
-          
-            textAlign: "left",  
+
+            textAlign: "left",
           }}
         >
-          <Typography sx={{color: '#000000',  fontSize: "24px",  lineHeight: "36px",}}>15 medical centers available in Alaska</Typography>
-          <Typography sx={{ display: 'inline-flex' , alignItems: 'center' , 
-             color: "#787887", // Set the text color
-          
-             fontSize: "16px", // Set the font size
-             fontWeight: 400, // Set the font weight
-             lineHeight: "24px", // Set the line height
-             textAlign: "left", // Center the text
-          }}>
+          <Typography
+            sx={{ color: "#000000", fontSize: "24px", lineHeight: "36px" }}
+          >
+            15 medical centers available in Alaska
+          </Typography>
+          <Typography
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+              color: "#787887", // Set the text color
+
+              fontSize: "16px", // Set the font size
+              fontWeight: 400, // Set the font weight
+              lineHeight: "24px", // Set the line height
+              textAlign: "left", // Center the text
+            }}
+          >
             <span style={{ display: "inline-flex", alignItems: "center" }}>
               <img
                 src={vectorout}
@@ -110,7 +187,7 @@ const Body = ({ value, setValue, changeUi, setUi }) => {
                   verticalAlign: "middle",
                   position: "relative",
                   marginLeft: "-22px",
-                 marginRight: "9px"
+                  marginRight: "9px",
                 }}
               />
             </span>
@@ -118,8 +195,15 @@ const Body = ({ value, setValue, changeUi, setUi }) => {
           </Typography>
         </Box>
       )}
-      {changeUi && <Booking/>}
-      
+      {changeUi && (
+        <Booking
+          hospitalList={hospitalList}
+          changeUi={changeUi}
+          setUi={setUi}
+          showBooking={showBooking}
+          localData={localData}
+        />
+      )}
     </div>
   );
 };

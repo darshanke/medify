@@ -5,14 +5,25 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import PropTypes from "prop-types";
 
-const Navbar = ({changeUi,value,setValue,setUi}) => {
-
-
-
-  const navBarList = ['Find Doctors', 'Hospitals', 'Medicines', 'Surgeries','Software for Provider', 'Facilities', ]
+const Navbar = ({ changeUi, value, setValue, setUi, setBooking }) => {
+  const navBarList = [
+    "Find Doctors",
+    "Hospitals",
+    "Medicines",
+    "Surgeries",
+    "Software for Provider",
+    "Facilities",
+  ];
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    setBooking(false);
+  };
+  const handleShowBooking = () => {
+    
+    console.log("hello");
+    setUi(true);
+    setBooking(true);
   };
 
   function CustomTabPanel(props) {
@@ -50,21 +61,19 @@ const Navbar = ({changeUi,value,setValue,setUi}) => {
         height: "96px",
         display: "flex",
         flexDirection: "row",
-        justifyContent: 'space-between', 
+        justifyContent: "space-between",
         alignItems: "center",
         background: changeUi ? "#FFFFFF" : "none",
-        paddingLeft: { xs: "20px", sm: "20px", md: "135px", lg: "135px"},
+        paddingLeft: { xs: "20px", sm: "20px", md: "135px", lg: "135px" },
         paddingRight: { xs: "20px", sm: "20px", md: "135px", lg: "135px" },
-
       }}
     >
-      <Box sx={{ 
-        display: "flex", 
-        alignItems: "center",
-       
-        }}>
-     
-     
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
         <img src={medifyicon} alt="medifyicon" />
         <Typography
           sx={{
@@ -75,117 +84,112 @@ const Navbar = ({changeUi,value,setValue,setUi}) => {
             letterSpacing: "0.02em",
             textAlign: "left",
             color: "#2AA8FF",
-            marginLeft: "8px", 
+            marginLeft: "8px",
           }}
         >
           Medify
         </Typography>
       </Box>
-      <Box 
-      sx={{
-    
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-        flexWrap: 'nowrap',
-         position: 'relative',
-         maxWidth: '912px',
-      height: '96px'
-  
-      }}
-        >
-          {
-            !changeUi &&  
-            <Box
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+          flexWrap: "nowrap",
+          position: "relative",
+          maxWidth: "912px",
+          height: "96px",
+        }}
+      >
+        {!changeUi && (
+          <Box
             value={value}
             onChange={handleChange}
-            scrollButtons="false" 
+            scrollButtons="false"
             sx={{
-              fontFamily: 'Poppins',
-              fontSize: '14px',
+              fontFamily: "Poppins",
+              fontSize: "14px",
               fontWeight: 400,
-              textAlign: 'left',
-              display: 'flex', 
-              justifyContent: 'center',
-              alignItems: 'center',
-              color: '#102851',
-              textTransform: 'none',
-                      }}
-  
-          >{
-            navBarList.map((item,index)=>(
-            (
-                <Typography key={index} sx={{
-                   padding: '12px 16px',  
-                  textTransform: 'none',
-                 
-                }} onClick={()=>{
-
-                  setUi(true) 
-                  setValue(index)}
-
-                } >{item}</Typography>
-              ) 
-                
-            ))
-          }
-            
-            
-          </Box>
-          }
-
-        {changeUi &&<Tabs
-          value={value}
-          onChange={handleChange}
-          scrollButtons="false" 
-          TabIndicatorProps={{
-            style: {
-              bottom: '-1px',
-              backgroundColor: "#2AA7FF", 
-              height: "5px", 
-            },
-          }}
-          sx={{
-            fontFamily: 'Poppins',
-            fontSize: '14px',
-            fontWeight: 400,
-            textAlign: 'left',
-            height: '96px'
-          
-         
-          }}
-
-        >{
-          navBarList.map((item,index)=>(
-          (
-              <Tab key={index} label={item} {...a11yProps(index)}  sx={{   
-                 lineHeight: '21px', 
-                 textAlign: 'center', 
-                 position: 'relative',
-                 top: '27px',
-                 color: '#102851',
-                 '&.Mui-selected':{
-                    color: '#2AA7FF'
-                 },
-                  textTransform: 'none'}}/>
-            ) 
-              
-          ))
-        }
-          
-          
-        </Tabs>}
-        <Button variant="contained" 
-            sx={{
-              width: '130px',
-              height: '40px',
-              borderRadius: '8px',
-              opacity: 1,
-              backgroundColor: '#2AA8FF', 
-              padding: '1px'
+              textAlign: "left",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              color: "#102851",
+              textTransform: "none",
             }}
+          >
+            {navBarList.map((item, index) => (
+              <Typography
+                key={index}
+                sx={{
+                  padding: "12px 16px",
+                  textTransform: "none",
+                }}
+                onClick={() => {
+                  setUi(true);
+                  setValue(index);
+                }}
+              >
+                {item}
+              </Typography>
+            ))}
+          </Box>
+        )}
 
-            >My Bookings</Button>
+        {changeUi && (
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            scrollButtons="false"
+            TabIndicatorProps={{
+              style: {
+                bottom: "-1px",
+                backgroundColor: "#2AA7FF",
+                height: "5px",
+              },
+            }}
+            sx={{
+              fontFamily: "Poppins",
+              fontSize: "14px",
+              fontWeight: 400,
+              textAlign: "left",
+              height: "96px",
+            }}
+          >
+            {navBarList.map((item, index) => (
+              <Tab
+                key={index}
+                label={item}
+                {...a11yProps(index)}
+                sx={{
+                  lineHeight: "21px",
+                  textAlign: "center",
+                  position: "relative",
+                  top: "27px",
+                  color: "#102851",
+                  "&.Mui-selected": {
+                    color: "#2AA7FF",
+                  },
+                  textTransform: "none",
+                }}
+              />
+            ))}
+          </Tabs>
+        )}
+        <Button
+          variant="contained"
+          onClick={handleShowBooking}
+          sx={{
+            width: "130px",
+            height: "40px",
+            borderRadius: "8px",
+            opacity: 1,
+            backgroundColor: "#2AA8FF",
+            padding: "1px",
+          }}
+        >
+          My Bookings
+        </Button>
       </Box>
     </Box>
   );
